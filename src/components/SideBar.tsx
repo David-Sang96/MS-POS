@@ -71,7 +71,6 @@ const SideBar = () => {
     <List
       sx={{
         width: "350px",
-        minHeight: "100vh",
         bgcolor: "#31363F",
       }}
     >

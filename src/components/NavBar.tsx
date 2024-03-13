@@ -1,19 +1,21 @@
 import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { useRouter } from "next/router";
+import { signOut, useSession } from "next-auth/react";
 
 export default function NavBar() {
-  const router = useRouter();
+  const { data } = useSession();
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ bgcolor: "#76ABAE", color: "#222831" }}>
-        <Toolbar>
-          <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
-            Foodie POS
-          </Typography>
+    <AppBar
+      position="static"
+      sx={{ bgcolor: "#76ABAE", color: "#222831", height: "8%", p: 1 }}
+    >
+      <Toolbar>
+        <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
+          Foodie POS
+        </Typography>
+        {data && (
           <Button
             sx={{
               color: "#EEEEEE",
@@ -21,11 +23,12 @@ export default function NavBar() {
               "&:hover": { bgcolor: "#240A34" },
             }}
             variant="contained"
+            onClick={() => signOut()}
           >
             Log Out
           </Button>
-        </Toolbar>
-      </AppBar>
-    </Box>
+        )}
+      </Toolbar>
+    </AppBar>
   );
 }

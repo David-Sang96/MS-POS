@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import { useSession } from "next-auth/react";
 import { ReactNode } from "react";
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
@@ -9,12 +10,14 @@ interface Props {
 }
 
 const BackofficeLayout = ({ children }: Props) => {
+  const { data } = useSession();
+
   return (
-    <Box>
+    <Box sx={{ height: "100vh" }}>
       <NavBar />
-      <Box sx={{ display: "flex" }}>
-        <SideBar />
-        <Box sx={{ bgcolor: "#EEEEEE", width: "100%", p: 2 }}> {children}</Box>
+      <Box sx={{ display: "flex", height: "92%" }}>
+        {data && <SideBar />}
+        <Box sx={{ width: "100%", p: 2 }}> {children}</Box>
       </Box>
       <SnackBarBox />
     </Box>
