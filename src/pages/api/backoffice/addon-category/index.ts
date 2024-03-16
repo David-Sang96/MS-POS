@@ -1,11 +1,21 @@
+import { prisma } from "@/utils/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const method = req.method;
   if (method === "GET") {
     return res.status(200).json({ message: "OK GET addon-category" });
   } else if (method === "POST") {
-    return res.status(200).json({ message: "OK POST addon-category" });
+    const { name, isAvailable } = req.body;
+    const isValid = name;
+    if (!isValid) return res.status(400).send("Bad Request");
+    const menuCategory = await prisma.menuCategory.create({
+      data: { name, isAvailable },
+    });
+    return res.status(201).json({ menuCategory });
   } else if (method === "PUT") {
     return res.status(200).json({ message: "OK PUT addon-category" });
   } else if (method === "DELETE") {

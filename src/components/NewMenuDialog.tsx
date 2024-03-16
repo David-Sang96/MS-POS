@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { createMenu } from "@/store/slices/menuSlice";
 import { openSneakbar } from "@/store/slices/sneakbarSlice";
-import { NewMenu } from "@/types/menu";
+import { CreateMenuPayload } from "@/types/menu";
 import {
   Box,
   Button,
@@ -25,7 +25,7 @@ const defaultNewMenu = {
 };
 
 const DialogBox = ({ open, setOpen }: Props) => {
-  const [newMenu, setNewMenu] = useState<NewMenu>(defaultNewMenu);
+  const [newMenu, setNewMenu] = useState<CreateMenuPayload>(defaultNewMenu);
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((store) => store.menu);
 
@@ -48,6 +48,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
               message: "New menu is created.",
             })
           );
+          setOpen(false);
         },
         onError: () => {
           dispatch(
@@ -110,7 +111,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
         >
           {isLoading ? (
             <Box sx={{ display: "flex", gap: 1 }}>
-              <CircularProgress size={20} sx={{ color: "black" }} />
+              <CircularProgress size={20} sx={{ color: "white" }} />
               Create
             </Box>
           ) : (

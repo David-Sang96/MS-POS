@@ -1,11 +1,11 @@
 import { BaseOption } from "./menu";
 
-export interface NewMenuCategory extends BaseOption {
+export interface CreateMenuCategoryPayload extends BaseOption {
   name: string;
-  price: number;
+  isAvailable: boolean;
 }
 
-export interface MenuCategory extends NewMenuCategory {
+export interface MenuCategory extends CreateMenuCategoryPayload {
   id: number;
 }
 

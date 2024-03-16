@@ -1,4 +1,5 @@
-import { Menu, MenuSlice, NewMenu } from "@/types/menu";
+import { config } from "@/config";
+import { CreateMenuPayload, Menu, MenuSlice } from "@/types/menu";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState: MenuSlice = {
@@ -9,18 +10,19 @@ const initialState: MenuSlice = {
 
 export const createMenu = createAsyncThunk(
   "menu/createMenu",
-  async (newMenu: NewMenu, thunkApi) => {
-    const { onSuccess, onError, ...menu } = newMenu;
-    const response = await fetch("http://localhost:5000/api/backoffice/menu", {
+  async (payload: CreateMenuPayload, thunkApi) => {
+    const { onSuccess, onError, ...newMenu } = payload;
+
+    const response = await fetch(`${config.backofficeApiBaseUrl}/menu`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(menu),
+      body: JSON.stringify(newMenu),
     });
-    const data = await response.json();
+    const { menu } = await response.json();
     onSuccess && onSuccess();
-    return data;
+    return menu;
   }
 );
 
@@ -45,7 +47,7 @@ export const menuSlice = createSlice({
         state.isError = null;
       })
       .addCase(createMenu.fulfilled, (state, action) => {
-        state.menus = action.payload;
+        state.menus = [...state.menus, action.payload];
         state.isLoading = false;
       })
       .addCase(createMenu.rejected, (state, action) => {

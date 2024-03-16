@@ -13,34 +13,52 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Company{
-  id Int @id @default(autoincrement())
-  name String
-  address String
-  locations Location[]
+model User {
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  name       String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  isArchived Boolean   @default(false)
+  companies  Company[]
 }
 
-model Location{
-  id Int @id @default(autoincrement())
-  name String
-  address String
-  company Company @relation(fields: [companyId],references: [id])
-  companyId Int
+model Company {
+  id         Int      @id @default(autoincrement())
+  name       String
+  address    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  isArchived Boolean  @default(false) 
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
 }
+
 
 model Menu {
-  id Int @id @default(autoincrement())
-  name String
-  price String
+  id                Int                @id @default(autoincrement())
+  name              String
+  price             Int
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  isArchived        Boolean            @default(false)
+  menuCategoryMenus MenuCategoryMenu[]
 }
 
-model MenuCategory{
-  id Int @id @default(autoincrement())
-  name String
-  price String
+model MenuCategory {
+  id                Int                @id @default(autoincrement())
+  name              String
+  isAvailable       Boolean
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  isArchived        Boolean            @default(false)
+  menuCategoryMenus MenuCategoryMenu[]
 }
 
-model MenuCategoryMenu{
-  id Int @id @default(autoincrement())
-  
+model MenuCategoryMenu {
+  id             Int          @id @default(autoincrement())
+  menu           Menu         @relation(fields: [menuId], references: [id])
+  menuId         Int
+  menuCategory   MenuCategory @relation(fields: [menuCategoryId], references: [id])
+  menuCategoryId Int
 }

@@ -49,6 +49,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
               message: "New AddonCategory is created.",
             })
           );
+          setOpen(false);
         },
         onError: () => {
           dispatch(
@@ -116,7 +117,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
         >
           {isLoading ? (
             <Box sx={{ display: "flex", gap: 1 }}>
-              <CircularProgress size={20} sx={{ color: "black" }} />
+              <CircularProgress size={20} sx={{ color: "white" }} />
               Create
             </Box>
           ) : (

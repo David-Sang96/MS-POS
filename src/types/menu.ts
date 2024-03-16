@@ -9,11 +9,11 @@ export interface MenuSlice {
   isError: Error | null;
 }
 
-export interface NewMenu extends BaseOption {
+export interface CreateMenuPayload extends BaseOption {
   name: string;
   price: number;
 }
 
-export interface Menu extends NewMenu {
+export interface Menu extends CreateMenuPayload {
   id: number;
 }

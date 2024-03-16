@@ -1,7 +1,8 @@
+import { config } from "@/config";
 import {
+  CreateMenuCategoryPayload,
   MenuCategory,
   MenuCategorySlice,
-  NewMenuCategory,
 } from "@/types/menuCategory";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
@@ -13,17 +14,21 @@ const initialState: MenuCategorySlice = {
 
 export const createMenuCategory = createAsyncThunk(
   "menuCategory/createMenuCategory",
-  async (newMenuCategory: NewMenuCategory, thunkApi) => {
-    const { onSuccess, onError, ...menuCategory } = newMenuCategory;
-    const response = await fetch("", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(menuCategory),
-    });
-    const data = await response.json();
-    thunkApi.dispatch(setMenuCategory(data));
+  async (payload: CreateMenuCategoryPayload, thunkApi) => {
+    const { onSuccess, onError, ...newMenuCategory } = payload;
+    const response = await fetch(
+      `${config.backofficeApiBaseUrl}/menu-category`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newMenuCategory),
+      }
+    );
+    const { menuCategory } = await response.json();
+    onSuccess && onSuccess();
+    thunkApi.dispatch(addMenuCategory(menuCategory));
   }
 );
 

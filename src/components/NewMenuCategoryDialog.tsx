@@ -1,15 +1,17 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { createMenu } from "@/store/slices/menuSlice";
+import { createMenuCategory } from "@/store/slices/menuCategorySlice";
 import { openSneakbar } from "@/store/slices/sneakbarSlice";
-import { NewMenuCategory } from "@/types/menuCategory";
+import { CreateMenuCategoryPayload } from "@/types/menuCategory";
 import {
   Box,
   Button,
+  Checkbox,
   CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControlLabel,
   TextField,
 } from "@mui/material";
 import { useState } from "react";
@@ -21,13 +23,12 @@ interface Props {
 
 const defaultNewMenuCategory = {
   name: "",
-  price: 0,
+  isAvailable: true,
 };
 
 const DialogBox = ({ open, setOpen }: Props) => {
-  const [newMenuCategory, setNewMenuCategory] = useState<NewMenuCategory>(
-    defaultNewMenuCategory
-  );
+  const [newMenuCategory, setNewMenuCategory] =
+    useState<CreateMenuCategoryPayload>(defaultNewMenuCategory);
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((store) => store.menuCategory);
 
@@ -41,7 +42,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
       );
     }
     dispatch(
-      createMenu({
+      createMenuCategory({
         ...newMenuCategory,
         onSuccess: () => {
           dispatch(
@@ -50,6 +51,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
               message: "New menuCategory is created.",
             })
           );
+          setOpen(false);
         },
         onError: () => {
           dispatch(
@@ -82,16 +84,16 @@ const DialogBox = ({ open, setOpen }: Props) => {
           }
           sx={{ width: "100%", my: 2 }}
         />
-        <TextField
-          label="Price"
-          type="number"
-          onChange={(e) =>
-            setNewMenuCategory({
-              ...newMenuCategory,
-              price: Number(e.target.value),
-            })
+        <FormControlLabel
+          control={
+            <Checkbox
+              defaultChecked={newMenuCategory.isAvailable}
+              onChange={(e, value) =>
+                setNewMenuCategory({ ...newMenuCategory, isAvailable: value })
+              }
+            />
           }
-          sx={{ width: "100%" }}
+          label="Available"
         />
       </DialogContent>
       <DialogActions>
@@ -117,7 +119,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
         >
           {isLoading ? (
             <Box sx={{ display: "flex", gap: 1 }}>
-              <CircularProgress size={20} sx={{ color: "black" }} />
+              <CircularProgress size={20} sx={{ color: "white" }} />
               Create
             </Box>
           ) : (
