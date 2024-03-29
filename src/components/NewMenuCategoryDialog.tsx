@@ -24,6 +24,7 @@ interface Props {
 const defaultNewMenuCategory = {
   name: "",
   isAvailable: true,
+  companyId: undefined,
 };
 
 const DialogBox = ({ open, setOpen }: Props) => {
@@ -31,6 +32,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
     useState<CreateMenuCategoryPayload>(defaultNewMenuCategory);
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((store) => store.menuCategory);
+  const { company } = useAppSelector((store) => store.company);
 
   const handleCreate = () => {
     if (!newMenuCategory.name) {
@@ -40,10 +42,12 @@ const DialogBox = ({ open, setOpen }: Props) => {
           message: "name is required.",
         })
       );
+      return;
     }
     dispatch(
       createMenuCategory({
         ...newMenuCategory,
+        companyId: company?.id,
         onSuccess: () => {
           dispatch(
             openSneakbar({
@@ -87,7 +91,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
         <FormControlLabel
           control={
             <Checkbox
-              defaultChecked={newMenuCategory.isAvailable}
+              checked={newMenuCategory.isAvailable}
               onChange={(e, value) =>
                 setNewMenuCategory({ ...newMenuCategory, isAvailable: value })
               }

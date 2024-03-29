@@ -9,7 +9,7 @@ export default function NavBar() {
   return (
     <AppBar
       position="static"
-      sx={{ bgcolor: "#76ABAE", color: "#222831", height: "8%", p: 1 }}
+      sx={{ bgcolor: "#76ABAE", color: "#222831", height: "7%" }}
     >
       <Toolbar>
         <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>

@@ -1,5 +1,6 @@
 import { config } from "@/config";
-import { CreateMenuPayload, Menu, MenuSlice } from "@/types/menu";
+import { CreateMenuPayload, MenuSlice } from "@/types/menu";
+import { Menu } from "@prisma/client";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState: MenuSlice = {
@@ -12,7 +13,6 @@ export const createMenu = createAsyncThunk(
   "menu/createMenu",
   async (payload: CreateMenuPayload, thunkApi) => {
     const { onSuccess, onError, ...newMenu } = payload;
-
     const response = await fetch(`${config.backofficeApiBaseUrl}/menu`, {
       method: "POST",
       headers: {
@@ -49,6 +49,7 @@ export const menuSlice = createSlice({
       .addCase(createMenu.fulfilled, (state, action) => {
         state.menus = [...state.menus, action.payload];
         state.isLoading = false;
+        state.isError = null;
       })
       .addCase(createMenu.rejected, (state, action) => {
         state.isLoading = false;
