@@ -1,5 +1,5 @@
 import BackofficeLayout from "@/components/BackofficeLayout";
-import ItemCard from "@/components/ItemCard";
+import MenuCard from "@/components/MenuCard";
 import NewMenuDialog from "@/components/NewMenuDialog";
 import { useAppSelector } from "@/store/hooks";
 import AutoAwesomeMosaicIcon from "@mui/icons-material/AutoAwesomeMosaic";
@@ -25,10 +25,10 @@ const Menu = () => {
           new Menu
         </Button>
       </Box>
-      <Box>
+      <Box sx={{ display: "flex", gap: 1.1, flexWrap: "wrap", mt: 2 }}>
         {menus.map((item) => (
           <Box key={item.id}>
-            <ItemCard
+            <MenuCard
               icon={
                 <AutoAwesomeMosaicIcon
                   sx={{ fontSize: "2.5rem", color: "#31363F" }}

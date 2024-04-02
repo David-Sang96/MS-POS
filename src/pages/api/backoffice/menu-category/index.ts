@@ -22,15 +22,22 @@ export default async function handler(
       where: { id },
     });
     if (!existedMenuCategory) return res.status(400).send("Bad Request");
-    // const isValid = name && isAvailable !== undefined;
-    // if (!isValid) return res.status(400).send("Bad Request");
     const updatedMenuCategory = await prisma.menuCategory.update({
       data: payload,
       where: { id },
     });
     return res.status(200).json({ updatedMenuCategory });
   } else if (method === "DELETE") {
-    return res.status(200).json({ message: "OK DELETE menu-category" });
+    const id = Number(req.query.id);
+    const isExisted = await prisma.menuCategory.findFirst({
+      where: { id },
+    });
+    if (!isExisted) return res.status(400).send("Bad Request");
+    await prisma.menuCategory.update({
+      data: { isArchived: true },
+      where: { id },
+    });
+    return res.status(200).send("Deleted");
   }
   res.status(405).json({ message: "Not Found" });
 }

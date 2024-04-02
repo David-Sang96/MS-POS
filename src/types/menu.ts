@@ -14,4 +14,13 @@ export interface MenuSlice {
 export interface CreateMenuPayload extends BaseOption {
   name: string;
   price: number;
+  menuCategoryIds: number[];
+}
+
+export interface UpdateMenuPayload extends Menu, BaseOption {
+  id: number;
+}
+
+export interface DeleteMenuPayload extends BaseOption {
+  id: number;
 }

@@ -1,27 +1,25 @@
-import { config } from "@/config";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { MenuCategoryMenusSlice } from "@/types/menuCategoryMenu";
+import { MenuCategoryMenu } from "@prisma/client";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-interface MenuCategorySlice {}
-
-const initialState: MenuCategorySlice = {};
-
-export const createMenuCategoryMenu = createAsyncThunk(
-  "menuCategoryMenu/createMenuCategoryMenu",
-  async (payload, thunkApi) => {
-    try {
-      const response = await fetch(`${config.backofficeApiBaseUrl}`);
-      const {} = await response.json();
-    } catch (error) {
-      console.error(error);
-    }
-  }
-);
+const initialState: MenuCategoryMenusSlice = {
+  menuCategoryMenus: [],
+  isLoading: false,
+  isError: null,
+};
 
 export const menuCategoryMenuSlice = createSlice({
   name: "menuCategoryMenu",
   initialState,
-  reducers: {},
+  reducers: {
+    setMenuCategoryMenus: (
+      state,
+      action: PayloadAction<MenuCategoryMenu[]>
+    ) => {
+      state.menuCategoryMenus = action.payload;
+    },
+  },
 });
 
-export const {} = menuCategoryMenuSlice.actions;
+export const { setMenuCategoryMenus } = menuCategoryMenuSlice.actions;
 export default menuCategoryMenuSlice.reducer;

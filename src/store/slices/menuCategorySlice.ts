@@ -1,6 +1,7 @@
 import { config } from "@/config";
 import {
   CreateMenuCategoryPayload,
+  DeleteMenuCategoryPayload,
   MenuCategorySlice,
   UpdateMenuCategoryPayload,
 } from "@/types/menuCategory";
@@ -32,6 +33,7 @@ export const createMenuCategory = createAsyncThunk(
       onSuccess && onSuccess();
       thunkApi.dispatch(addMenuCategory(menuCategory));
     } catch (error) {
+      onError && onError();
       console.error(error);
     }
   }
@@ -56,6 +58,27 @@ export const updateMenuCategory = createAsyncThunk(
       onSuccess && onSuccess();
       thunkApi.dispatch(replaceMenuCategory(updatedMenuCategory));
     } catch (error) {
+      onError && onError();
+      console.error(error);
+    }
+  }
+);
+
+export const deleteMenuCategory = createAsyncThunk(
+  "menuCategory/deleteMenuCategory",
+  async (payload: DeleteMenuCategoryPayload, thunkApi) => {
+    const { onSuccess, onError, id } = payload;
+    try {
+      await fetch(`${config.backofficeApiBaseUrl}/menu-category?id=${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      thunkApi.dispatch(removeMenuCategory(id));
+      onSuccess && onSuccess();
+    } catch (error) {
+      onError && onError();
       console.error(error);
     }
   }
@@ -76,9 +99,9 @@ export const menuCategorySlice = createSlice({
         item.id === action.payload.id ? action.payload : item
       );
     },
-    deleteMenuCategory: (state, action: PayloadAction<MenuCategory>) => {
+    removeMenuCategory: (state, action: PayloadAction<number>) => {
       state.menuCategories = state.menuCategories.filter(
-        (item) => item.id !== action.payload.id
+        (item) => item.id !== action.payload
       );
     },
   },
@@ -87,7 +110,7 @@ export const menuCategorySlice = createSlice({
 export const {
   setMenuCategory,
   addMenuCategory,
-  deleteMenuCategory,
+  removeMenuCategory,
   replaceMenuCategory,
 } = menuCategorySlice.actions;
 

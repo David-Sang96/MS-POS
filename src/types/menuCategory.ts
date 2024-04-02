@@ -16,3 +16,7 @@ export interface CreateMenuCategoryPayload extends BaseOption {
 export interface UpdateMenuCategoryPayload extends CreateMenuCategoryPayload {
   id: number;
 }
+
+export interface DeleteMenuCategoryPayload extends BaseOption {
+  id: number;
+}

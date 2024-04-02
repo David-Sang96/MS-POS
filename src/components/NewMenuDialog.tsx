@@ -5,13 +5,21 @@ import { CreateMenuPayload } from "@/types/menu";
 import {
   Box,
   Button,
+  Checkbox,
   CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  ListItemText,
+  MenuItem,
+  OutlinedInput,
+  Select,
   TextField,
 } from "@mui/material";
+import { MenuCategory } from "@prisma/client";
 import { useState } from "react";
 
 interface Props {
@@ -22,19 +30,21 @@ interface Props {
 const defaultNewMenu = {
   name: "",
   price: 0,
+  menuCategoryIds: [],
 };
 
 const DialogBox = ({ open, setOpen }: Props) => {
   const [newMenu, setNewMenu] = useState<CreateMenuPayload>(defaultNewMenu);
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((store) => store.menu);
+  const { menuCategories } = useAppSelector((store) => store.menuCategory);
 
   const handleCreate = () => {
-    if (!newMenu.name) {
-      dispatch(
+    if (!newMenu.name || newMenu.menuCategoryIds.length === 0) {
+      return dispatch(
         openSneakbar({
           type: "error",
-          message: "name is required.",
+          message: "Please filled up all fields.",
         })
       );
     }
@@ -77,7 +87,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
           label="Name"
           type="text"
           onChange={(e) => setNewMenu({ ...newMenu, name: e.target.value })}
-          sx={{ width: "100%", my: 2 }}
+          sx={{ width: "100%", mt: 2 }}
         />
         <TextField
           label="Price"
@@ -85,10 +95,40 @@ const DialogBox = ({ open, setOpen }: Props) => {
           onChange={(e) =>
             setNewMenu({ ...newMenu, price: Number(e.target.value) })
           }
-          sx={{ width: "100%" }}
+          sx={{ width: "100%", my: 2 }}
         />
+        <FormControl sx={{ width: "100%" }}>
+          <InputLabel>MenuCategory</InputLabel>
+          <Select
+            input={<OutlinedInput label="MenuCategory" />}
+            multiple
+            value={newMenu.menuCategoryIds}
+            onChange={(evt) => {
+              const item = evt.target.value as number[];
+              setNewMenu({ ...newMenu, menuCategoryIds: item });
+            }}
+            renderValue={() =>
+              newMenu.menuCategoryIds
+                .map(
+                  (itemId) =>
+                    menuCategories.find(
+                      (menuCategory) => menuCategory.id === itemId
+                    ) as MenuCategory
+                )
+                .map((item) => item.name)
+                .join(", ")
+            }
+          >
+            {menuCategories.map((item) => (
+              <MenuItem key={item.id} value={item.id}>
+                <Checkbox checked={newMenu.menuCategoryIds.includes(item.id)} />
+                <ListItemText primary={item.name} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ mr: 2 }}>
         <Button
           sx={{ color: "#222831" }}
           variant="text"

@@ -100,7 +100,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
           label="Available"
         />
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ mr: 2 }}>
         <Button
           sx={{ color: "#222831" }}
           variant="text"
