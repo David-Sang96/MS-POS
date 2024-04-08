@@ -1,9 +1,13 @@
 import { config } from "@/config";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { AddonSlice } from "@/types/addon";
+import { Addon } from "@prisma/client";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-interface AddonSlice {}
-
-const initialState: AddonSlice = {};
+const initialState: AddonSlice = {
+  addons: [],
+  isLoading: false,
+  isError: null,
+};
 
 export const createAddon = createAsyncThunk(
   "addon/createAddon",
@@ -20,8 +24,24 @@ export const createAddon = createAsyncThunk(
 export const addonSlice = createSlice({
   name: "addon",
   initialState,
-  reducers: {},
+  reducers: {
+    setAddons: (state, action: PayloadAction<Addon[]>) => {
+      state.addons = action.payload;
+    },
+    addAddon: (state, action: PayloadAction<Addon>) => {
+      state.addons = [...state.addons, action.payload];
+    },
+    replaceAddon: (state, action: PayloadAction<Addon>) => {
+      state.addons = state.addons.map((item) =>
+        item.id === action.payload.id ? action.payload : item
+      );
+    },
+    removeAddon: (state, action: PayloadAction<number>) => {
+      state.addons = state.addons.filter((item) => item.id !== action.payload);
+    },
+  },
 });
 
-export const {} = addonSlice.actions;
+export const { setAddons, addAddon, replaceAddon, removeAddon } =
+  addonSlice.actions;
 export default addonSlice.reducer;

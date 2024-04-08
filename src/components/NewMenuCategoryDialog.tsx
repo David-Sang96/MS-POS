@@ -5,13 +5,11 @@ import { CreateMenuCategoryPayload } from "@/types/menuCategory";
 import {
   Box,
   Button,
-  Checkbox,
   CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControlLabel,
   TextField,
 } from "@mui/material";
 import { useState } from "react";
@@ -23,7 +21,6 @@ interface Props {
 
 const defaultNewMenuCategory = {
   name: "",
-  isAvailable: true,
   companyId: undefined,
 };
 
@@ -36,13 +33,12 @@ const DialogBox = ({ open, setOpen }: Props) => {
 
   const handleCreate = () => {
     if (!newMenuCategory.name) {
-      dispatch(
+      return dispatch(
         openSneakbar({
           type: "error",
-          message: "name is required.",
+          message: "Missing required Data",
         })
       );
-      return;
     }
     dispatch(
       createMenuCategory({
@@ -86,9 +82,9 @@ const DialogBox = ({ open, setOpen }: Props) => {
           onChange={(e) =>
             setNewMenuCategory({ ...newMenuCategory, name: e.target.value })
           }
-          sx={{ width: "100%", my: 2 }}
+          sx={{ width: "100%", mt: 2 }}
         />
-        <FormControlLabel
+        {/* <FormControlLabel
           control={
             <Checkbox
               checked={newMenuCategory.isAvailable}
@@ -98,7 +94,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
             />
           }
           label="Available"
-        />
+        /> */}
       </DialogContent>
       <DialogActions sx={{ mr: 2 }}>
         <Button

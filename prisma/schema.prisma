@@ -41,7 +41,6 @@ model MenuCategory {
   id                           Int                            @id @default(autoincrement())
   name                         String
   companyId                    Int
-  isAvailable                  Boolean                        @default(true)
   isArchived                   Boolean                        @default(false)
   createdAt                    DateTime                       @default(now())
   updatedAt                    DateTime                       @updatedAt

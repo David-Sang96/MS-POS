@@ -1,7 +1,14 @@
 import { config } from "@/config";
-import { CreateMenuPayload, DeleteMenuPayload, MenuSlice } from "@/types/menu";
+import {
+  CreateMenuPayload,
+  DeleteMenuPayload,
+  MenuSlice,
+  UpdateMenuPayload,
+} from "@/types/menu";
 import { Menu } from "@prisma/client";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { setDisableLocationMenus } from "./disableLocationMenuSlice";
+import { setMenuCategoryMenus } from "./menuCategoryMenuSlice";
 
 const initialState: MenuSlice = {
   menus: [],
@@ -22,15 +29,16 @@ export const createMenu = createAsyncThunk(
     });
     const { menu, menuCategoryMenus } = await response.json();
     onSuccess && onSuccess();
+    thunkApi.dispatch(setMenuCategoryMenus(menuCategoryMenus));
     return menu;
   }
 );
 
 export const updateMenu = createAsyncThunk(
   "menu/updateMenu",
-  async (payload: CreateMenuPayload, thunkApi) => {
+  async (payload: UpdateMenuPayload, thunkApi) => {
+    const { onSuccess, onError, ...updateMenu } = payload;
     try {
-      const { onSuccess, onError, ...updateMenu } = payload;
       const response = await fetch(`${config.backofficeApiBaseUrl}/menu`, {
         method: "PUT",
         headers: {
@@ -38,8 +46,12 @@ export const updateMenu = createAsyncThunk(
         },
         body: JSON.stringify(updateMenu),
       });
-      const {} = await response.json();
+      const { menu, disabledLocationMenus, menuCategoryMenus } =
+        await response.json();
       onSuccess && onSuccess();
+      thunkApi.dispatch(replaceMenu(menu));
+      thunkApi.dispatch(setDisableLocationMenus(disabledLocationMenus));
+      thunkApi.dispatch(setMenuCategoryMenus(menuCategoryMenus));
     } catch (error) {
       console.error(error);
     }

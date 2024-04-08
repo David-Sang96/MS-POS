@@ -7,6 +7,7 @@ import {
   updateMenuCategory,
 } from "@/store/slices/menuCategorySlice";
 import { openSneakbar } from "@/store/slices/sneakbarSlice";
+import { UpdateMenuCategoryPayload } from "@/types/menuCategory";
 import {
   Box,
   Button,
@@ -15,26 +16,41 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { MenuCategory } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 const MenuCategoryDetails = () => {
-  const [editMenuCategory, setEditMenuCategory] = useState<MenuCategory>();
+  const [updatedMenuCategory, setUpdatedMenuCategory] =
+    useState<UpdateMenuCategoryPayload>();
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const id = Number(router.query.id);
   const { menuCategories } = useAppSelector((store) => store.menuCategory);
   const menuCategory = menuCategories.find((item) => item.id === id);
   const dispatch = useAppDispatch();
+  const { selectedLocation } = useAppSelector((store) => store.app);
+  const { disableLocationMenuCategories } = useAppSelector(
+    (store) => store.disableLocationMenuCategory
+  );
+  const isAvailable = disableLocationMenuCategories.find(
+    (item) =>
+      item.menuCategoryId === menuCategory?.id &&
+      item.locationId === selectedLocation?.id
+  )
+    ? false
+    : true;
 
   useEffect(() => {
     if (menuCategory) {
-      setEditMenuCategory(menuCategory);
+      setUpdatedMenuCategory({
+        ...menuCategory,
+        locationId: selectedLocation?.id,
+        isAvailable,
+      });
     }
-  }, []);
+  }, [menuCategory]);
 
-  if (!editMenuCategory) {
+  if (!updatedMenuCategory) {
     return (
       <BackofficeLayout>
         <Box
@@ -67,15 +83,15 @@ const MenuCategoryDetails = () => {
 
   const handleUpdate = () => {
     if (
-      editMenuCategory.name.trim() === menuCategory?.name.trim() &&
-      editMenuCategory.isAvailable === menuCategory?.isAvailable
+      updatedMenuCategory?.name?.trim() === menuCategory?.name.trim() &&
+      updatedMenuCategory.isAvailable === isAvailable
     ) {
       return router.push("/backoffice/menu-category");
     }
 
     dispatch(
       updateMenuCategory({
-        ...editMenuCategory,
+        ...updatedMenuCategory,
         onSuccess: () => {
           dispatch(
             openSneakbar({
@@ -128,17 +144,23 @@ const MenuCategoryDetails = () => {
         sx={{ maxWidth: 350, display: "flex", flexDirection: "column", ml: 4 }}
       >
         <TextField
-          defaultValue={editMenuCategory.name}
+          defaultValue={updatedMenuCategory.name}
           onChange={(e) =>
-            setEditMenuCategory({ ...editMenuCategory, name: e.target.value })
+            setUpdatedMenuCategory({
+              ...updatedMenuCategory,
+              name: e.target.value,
+            })
           }
         />
         <FormControlLabel
           control={
             <Checkbox
-              checked={editMenuCategory.isAvailable}
+              defaultChecked={isAvailable}
               onChange={(e, value) =>
-                setEditMenuCategory({ ...editMenuCategory, isAvailable: value })
+                setUpdatedMenuCategory({
+                  ...updatedMenuCategory,
+                  isAvailable: value,
+                })
               }
             />
           }
@@ -146,8 +168,8 @@ const MenuCategoryDetails = () => {
         />
         <Button
           disabled={
-            editMenuCategory.name === menuCategory?.name &&
-            editMenuCategory.isAvailable === menuCategory.isAvailable
+            updatedMenuCategory.name === menuCategory?.name &&
+            updatedMenuCategory.isAvailable === isAvailable
           }
           variant="contained"
           sx={{
@@ -165,8 +187,8 @@ const MenuCategoryDetails = () => {
       <DeleteDialog
         open={open}
         setOpen={setOpen}
-        content="MenuCategory"
-        title="MenuCategory"
+        content="menuCategory"
+        title="Delete MenuCategory"
         onDelete={handleDelete}
       />
     </BackofficeLayout>

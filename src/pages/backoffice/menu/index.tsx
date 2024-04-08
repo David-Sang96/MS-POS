@@ -1,5 +1,5 @@
 import BackofficeLayout from "@/components/BackofficeLayout";
-import MenuCard from "@/components/MenuCard";
+import ItemCard from "@/components/ItemCard";
 import NewMenuDialog from "@/components/NewMenuDialog";
 import { useAppSelector } from "@/store/hooks";
 import AutoAwesomeMosaicIcon from "@mui/icons-material/AutoAwesomeMosaic";
@@ -9,6 +9,10 @@ import { useState } from "react";
 const Menu = () => {
   const [open, setOpen] = useState(false);
   const { menus } = useAppSelector((store) => store.menu);
+  const { selectedLocation } = useAppSelector((store) => store.app);
+  const { disableLocationMenus } = useAppSelector(
+    (store) => store.disableLocationMenu
+  );
 
   return (
     <BackofficeLayout>
@@ -26,21 +30,31 @@ const Menu = () => {
         </Button>
       </Box>
       <Box sx={{ display: "flex", gap: 1.1, flexWrap: "wrap", mt: 2 }}>
-        {menus.map((item) => (
-          <Box key={item.id}>
-            <MenuCard
-              icon={
-                <AutoAwesomeMosaicIcon
-                  sx={{ fontSize: "2.5rem", color: "#31363F" }}
-                />
-              }
-              title={item.name}
-              price={item.price}
-              description={item.description as string}
-              href={`/backoffice/menu/${item.id}`}
-            />
-          </Box>
-        ))}
+        {menus.map((menu) => {
+          const isAvailable = disableLocationMenus.find(
+            (item) =>
+              item.menuId === menu.id &&
+              item.locationId === selectedLocation?.id
+          )
+            ? false
+            : true;
+          return (
+            <Box key={menu.id}>
+              <ItemCard
+                icon={
+                  <AutoAwesomeMosaicIcon
+                    sx={{ fontSize: "2.5rem", color: "#31363F" }}
+                  />
+                }
+                title={menu.name}
+                price={menu.price}
+                description={menu.description as string}
+                href={`/backoffice/menu/${menu.id}`}
+                available={isAvailable}
+              />
+            </Box>
+          );
+        })}
       </Box>
       <NewMenuDialog open={open} setOpen={setOpen} />
     </BackofficeLayout>

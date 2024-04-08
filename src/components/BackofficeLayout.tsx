@@ -15,7 +15,7 @@ interface Props {
 const BackofficeLayout = ({ children }: Props) => {
   const { data } = useSession();
   const dispatch = useAppDispatch();
-  const { init } = useAppSelector((store) => store.app);
+  const { init, isLoading } = useAppSelector((store) => store.app);
 
   useEffect(() => {
     if (!init) {
@@ -23,10 +23,12 @@ const BackofficeLayout = ({ children }: Props) => {
     }
   }, [init]);
 
+  // if (isLoading) return null;
+
   return (
     <Box sx={{ height: "100vh" }}>
       <NavBar />
-      <Box sx={{ display: "flex", height: "92%" }}>
+      <Box sx={{ display: "flex", height: "93%" }}>
         {data && <SideBar />}
         <Box sx={{ width: "100%", p: 2 }}> {children}</Box>
       </Box>

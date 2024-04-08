@@ -18,7 +18,9 @@ export interface CreateMenuPayload extends BaseOption {
 }
 
 export interface UpdateMenuPayload extends Menu, BaseOption {
-  id: number;
+  locationId?: number;
+  isAvailable?: boolean;
+  menuCategoryIds?: number[];
 }
 
 export interface DeleteMenuPayload extends BaseOption {

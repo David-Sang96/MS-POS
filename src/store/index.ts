@@ -3,6 +3,8 @@ import addonCategoryReducer from "./slices/addonCategorySlice";
 import addonReducer from "./slices/addonSlice";
 import appReducer from "./slices/appSlice";
 import companyReducer from "./slices/companySlice";
+import disableLocationMenuCategoryReducer from "./slices/disableLocationMenuCategorySlice";
+import disableLocationMenuReducer from "./slices/disableLocationMenuSlice";
 import locationReducer from "./slices/locationSlice";
 import menuAddonCategoryReducer from "./slices/menuAddonCategorySlice";
 import menuCategoryMenuReducer from "./slices/menuCategoryMenuSlice";
@@ -17,10 +19,12 @@ export const store = configureStore({
     company: companyReducer,
     location: locationReducer,
     menuCategory: menuCategoryReducer,
+    disableLocationMenuCategory: disableLocationMenuCategoryReducer,
     menuCategoryMenu: menuCategoryMenuReducer,
     menu: menuReducer,
-    menuAddonCategory: menuAddonCategoryReducer,
+    disableLocationMenu: disableLocationMenuReducer,
     addonCategory: addonCategoryReducer,
+    menuAddonCategory: menuAddonCategoryReducer,
     addon: addonReducer,
     table: tableReducer,
     sneakbar: sneakbarReducer,

@@ -9,17 +9,40 @@ export default async function handler(
   if (method === "GET") {
     return res.status(200).json({ message: "OK GET addon-category" });
   } else if (method === "POST") {
-    const { name, isAvailable } = req.body;
-    const isValid = name;
+    const { name, isRequired, menuIds } = req.body;
+    const isValid = name && isRequired !== undefined && menuIds.length !== 0;
     if (!isValid) return res.status(400).send("Bad Request");
-    const menuCategory = await prisma.menuCategory.create({
-      data: { name, isAvailable },
+    const addonCategory = await prisma.addonCategory.create({
+      data: { name, isRequired },
     });
-    return res.status(201).json({ menuCategory });
+    const menuAddonCategory = await prisma.$transaction(
+      menuIds.map((menuId: number) =>
+        prisma.menuAddonCategory.create({
+          data: { menuId, addonCategoryId: addonCategory.id },
+        })
+      )
+    );
+    const menuAddonCategories = await prisma.menuAddonCategory.findMany({
+      where: { addonCategoryId: addonCategory.id },
+    });
+    return res.status(201).json({ addonCategory, menuAddonCategories });
   } else if (method === "PUT") {
     return res.status(200).json({ message: "OK PUT addon-category" });
   } else if (method === "DELETE") {
-    return res.status(200).json({ message: "OK DELETE addon-category" });
+    const id = Number(req.query.id);
+    const existedAddonCategory = await prisma.addonCategory.findFirst({
+      where: { id },
+    });
+    if (!existedAddonCategory) return res.status(400).send("Bad Request");
+    await prisma.addonCategory.update({
+      data: { isArchived: true },
+      where: { id },
+    });
+    await prisma.menuAddonCategory.deleteMany({
+      where: { addonCategoryId: id },
+    });
+
+    return res.status(200).send("Deleted");
   }
   res.status(405).json({ message: "Not Found" });
 }

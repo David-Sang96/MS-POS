@@ -1,16 +1,25 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { createMenu } from "@/store/slices/menuSlice";
+import { createAddonCategory } from "@/store/slices/addonCategorySlice";
 import { openSneakbar } from "@/store/slices/sneakbarSlice";
+import { CreateAddonCategoryPayload } from "@/types/addonCategory";
 import {
   Box,
   Button,
+  Checkbox,
   CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  ListItemText,
+  MenuItem,
+  OutlinedInput,
+  Select,
   TextField,
 } from "@mui/material";
+import { Menu } from "@prisma/client";
 import { useState } from "react";
 
 interface Props {
@@ -21,27 +30,31 @@ interface Props {
 const defaultNewAddonCategory = {
   name: "",
   price: 0,
+  isRequired: true,
+  menuIds: [],
 };
 
 const DialogBox = ({ open, setOpen }: Props) => {
-  const [newAddonCategory, setNewAddonCategory] = useState(
-    defaultNewAddonCategory
-  );
+  const [newAddonCategory, setNewAddonCategory] =
+    useState<CreateAddonCategoryPayload>(defaultNewAddonCategory);
+  const [selectedMenuIds, setSelectedMenuIds] = useState<number[]>([]);
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((store) => store.menu);
+  const { menus } = useAppSelector((store) => store.menu);
 
   const handleCreate = () => {
-    if (!newAddonCategory.name) {
-      dispatch(
+    if (!newAddonCategory?.name || selectedMenuIds.length === 0) {
+      return dispatch(
         openSneakbar({
           type: "error",
-          message: "name is required.",
+          message: "Missing data required.",
         })
       );
     }
     dispatch(
-      createMenu({
+      createAddonCategory({
         ...newAddonCategory,
+        menuIds: selectedMenuIds,
         onSuccess: () => {
           dispatch(
             openSneakbar({
@@ -69,7 +82,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
       open={open}
       onClose={() => {
         setOpen(false);
-        setNewAddonCategory(defaultNewAddonCategory);
+        setSelectedMenuIds([]);
       }}
     >
       <DialogTitle>Create New AddonCategory</DialogTitle>
@@ -93,14 +106,43 @@ const DialogBox = ({ open, setOpen }: Props) => {
           }
           sx={{ width: "100%" }}
         />
+        <FormControl sx={{ width: "100%", mt: 2 }}>
+          <InputLabel>Menu</InputLabel>
+          <Select
+            multiple
+            value={selectedMenuIds}
+            onChange={(e) => {
+              const selectedMenuId = e.target.value as number[];
+              setSelectedMenuIds(selectedMenuId);
+            }}
+            renderValue={() =>
+              selectedMenuIds
+                .map(
+                  (menuId) => menus.find((item) => item.id === menuId) as Menu
+                )
+                .map((item) => item?.name)
+                .join(", ")
+            }
+            input={<OutlinedInput label="Menu" />}
+          >
+            {menus.map((menu) => {
+              return (
+                <MenuItem key={menu.id} value={menu.id}>
+                  <Checkbox checked={selectedMenuIds.includes(menu.id)} />
+                  <ListItemText primary={menu.name} />
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ mr: 2 }}>
         <Button
           sx={{ color: "#222831" }}
           variant="text"
           onClick={() => {
             setOpen(false);
-            setNewAddonCategory(defaultNewAddonCategory);
+            setSelectedMenuIds([]);
           }}
         >
           cancel

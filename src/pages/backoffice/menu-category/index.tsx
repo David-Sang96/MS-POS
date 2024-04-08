@@ -9,6 +9,10 @@ import { useState } from "react";
 const MenuCategory = () => {
   const [open, setOpen] = useState<boolean>(false);
   const { menuCategories } = useAppSelector((store) => store.menuCategory);
+  const { selectedLocation } = useAppSelector((store) => store.app);
+  const { disableLocationMenuCategories } = useAppSelector(
+    (store) => store.disableLocationMenuCategory
+  );
 
   return (
     <BackofficeLayout>
@@ -26,19 +30,28 @@ const MenuCategory = () => {
         </Button>
       </Box>
       <Box sx={{ display: "flex", gap: 1.1, flexWrap: "wrap", mt: 2 }}>
-        {menuCategories.map((item) => (
-          <Box key={item.id}>
-            <ItemCard
-              icon={
-                <MenuBookIcon sx={{ fontSize: "3rem", color: "#31363F" }} />
-              }
-              title={item.name}
-              subTitle="test category"
-              href={`/backoffice/menu-category/${item.id}`}
-              available={item.isAvailable}
-            />
-          </Box>
-        ))}
+        {menuCategories.map((menuCategory) => {
+          const isAvailable = disableLocationMenuCategories.find(
+            (item) =>
+              item.menuCategoryId === menuCategory.id &&
+              item.locationId === selectedLocation?.id
+          )
+            ? false
+            : true;
+          return (
+            <Box key={menuCategory.id}>
+              <ItemCard
+                icon={
+                  <MenuBookIcon sx={{ fontSize: "3rem", color: "#31363F" }} />
+                }
+                title={menuCategory.name}
+                subTitle="test category"
+                href={`/backoffice/menu-category/${menuCategory.id}`}
+                available={isAvailable}
+              />
+            </Box>
+          );
+        })}
       </Box>
       <NewMenuCategoryDialog open={open} setOpen={setOpen} />
     </BackofficeLayout>

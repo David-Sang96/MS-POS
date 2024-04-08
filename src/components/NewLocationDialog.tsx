@@ -1,4 +1,7 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { createLocation } from "@/store/slices/locationSlice";
+import { openSneakbar } from "@/store/slices/sneakbarSlice";
+import { CreateLocationPayload } from "@/types/location";
 import {
   Box,
   Button,
@@ -16,12 +19,50 @@ interface Props {
   setOpen: (value: boolean) => void;
 }
 
+const defaultNewLocation = {
+  name: "",
+  street: "",
+  city: "",
+  township: "",
+  companyId: undefined,
+};
+
 const DialogBox = ({ open, setOpen }: Props) => {
-  const [newLocation, setNewLocation] = useState();
+  const [newLocation, setNewLocation] =
+    useState<CreateLocationPayload>(defaultNewLocation);
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((store) => store.menu);
+  const { company } = useAppSelector((store) => store.company);
 
-  const handleCreate = () => {};
+  const handleCreate = () => {
+    const isValid =
+      newLocation.city &&
+      newLocation.name &&
+      newLocation.street &&
+      newLocation.township;
+    if (!isValid) {
+      return dispatch(
+        openSneakbar({ type: "error", message: "Missing required Data" })
+      );
+    }
+    dispatch(
+      createLocation({
+        ...newLocation,
+        companyId: company?.id,
+        onSuccess: () => {
+          dispatch(
+            openSneakbar({ type: "success", message: "Created successfully" })
+          );
+          setOpen(false);
+        },
+        onError: () => {
+          dispatch(
+            openSneakbar({ type: "error", message: "Failed to create" })
+          );
+        },
+      })
+    );
+  };
 
   return (
     <Dialog
@@ -33,19 +74,39 @@ const DialogBox = ({ open, setOpen }: Props) => {
       <DialogTitle>Create New Location</DialogTitle>
       <DialogContent>
         <TextField
-          label="Name"
+          label="name"
           type="text"
-          onChange={(e) => {}}
-          sx={{ width: "100%", my: 2 }}
+          onChange={(e) =>
+            setNewLocation({ ...newLocation, name: e.target.value })
+          }
+          sx={{ width: "100%", my: 1 }}
         />
         <TextField
-          label="Price"
-          type="number"
-          onChange={(e) => {}}
-          sx={{ width: "100%" }}
+          label="street"
+          type="text"
+          onChange={(e) => {
+            setNewLocation({ ...newLocation, street: e.target.value });
+          }}
+          sx={{ width: "100%", my: 1 }}
+        />
+        <TextField
+          label="township"
+          type="text"
+          onChange={(e) => {
+            setNewLocation({ ...newLocation, township: e.target.value });
+          }}
+          sx={{ width: "100%", my: 1 }}
+        />
+        <TextField
+          label="city"
+          type="text"
+          onChange={(e) => {
+            setNewLocation({ ...newLocation, city: e.target.value });
+          }}
+          sx={{ width: "100%", my: 1 }}
         />
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ mr: 2 }}>
         <Button
           sx={{ color: "#222831" }}
           variant="text"

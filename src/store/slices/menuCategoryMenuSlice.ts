@@ -22,4 +22,5 @@ export const menuCategoryMenuSlice = createSlice({
 });
 
 export const { setMenuCategoryMenus } = menuCategoryMenuSlice.actions;
+
 export default menuCategoryMenuSlice.reducer;

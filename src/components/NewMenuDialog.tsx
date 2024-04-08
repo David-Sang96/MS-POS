@@ -44,7 +44,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
       return dispatch(
         openSneakbar({
           type: "error",
-          message: "Please filled up all fields.",
+          message: "Missing required Data.",
         })
       );
     }
@@ -87,7 +87,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
           label="Name"
           type="text"
           onChange={(e) => setNewMenu({ ...newMenu, name: e.target.value })}
-          sx={{ width: "100%", mt: 2 }}
+          sx={{ width: "100%", mt: 1 }}
         />
         <TextField
           label="Price"

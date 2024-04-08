@@ -35,7 +35,6 @@ CREATE TABLE "MenuCategory" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "companyId" INTEGER NOT NULL,
-    "isAvailable" BOOLEAN NOT NULL DEFAULT true,
     "isArchived" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,

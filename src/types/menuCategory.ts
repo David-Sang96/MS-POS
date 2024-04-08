@@ -9,12 +9,14 @@ export interface MenuCategorySlice {
 
 export interface CreateMenuCategoryPayload extends BaseOption {
   name: string;
-  isAvailable: boolean;
   companyId: number | undefined;
 }
 
-export interface UpdateMenuCategoryPayload extends CreateMenuCategoryPayload {
-  id: number;
+export interface UpdateMenuCategoryPayload extends MenuCategory, BaseOption {
+  // id: number;
+  // name: string;
+  isAvailable: boolean;
+  locationId?: number;
 }
 
 export interface DeleteMenuCategoryPayload extends BaseOption {

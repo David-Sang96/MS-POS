@@ -10,6 +10,7 @@ import {
   Button,
   Checkbox,
   FormControl,
+  FormControlLabel,
   InputLabel,
   ListItemText,
   MenuItem,
@@ -42,20 +43,32 @@ const MenuDetails = () => {
       ) as MenuCategory;
       return menuCategory.id;
     });
-
   const dispatch = useAppDispatch();
+  const { selectedLocation } = useAppSelector((store) => store.app);
+  const { disableLocationMenus } = useAppSelector(
+    (store) => store.disableLocationMenu
+  );
+  const isAvailable = disableLocationMenus.find(
+    (item) => item.locationId === selectedLocation?.id && item.menuId === id
+  )
+    ? false
+    : true;
 
   useEffect(() => {
     if (menu) {
-      setUpdatedMenu(menu);
+      setUpdatedMenu({
+        ...menu,
+        isAvailable,
+        locationId: selectedLocation?.id,
+      });
       setSelectedItem(selectedMenuCategoryIds);
     }
-  }, []);
+  }, [menu]);
 
   const handleUpdate = () => {
     if (!updatedMenu?.name || selectedItem.length === 0) {
       return dispatch(
-        openSneakbar({ type: "error", message: "Please filled up all fields" })
+        openSneakbar({ type: "error", message: "Missing required Data." })
       );
     }
     dispatch(
@@ -179,6 +192,18 @@ const MenuDetails = () => {
             ))}
           </Select>
         </FormControl>
+        <FormControlLabel
+          control={
+            <Checkbox
+              defaultChecked={isAvailable}
+              onChange={(e, value) => {
+                setUpdatedMenu({ ...updatedMenu, isAvailable: value });
+              }}
+            />
+          }
+          label="Available"
+          sx={{ width: "100%", mt: 1 }}
+        />
         <Button
           variant="contained"
           sx={{
@@ -196,8 +221,8 @@ const MenuDetails = () => {
       <DeleteDialog
         open={open}
         setOpen={setOpen}
-        content="Menu"
-        title="Menu"
+        content="menu"
+        title="Delete Menu"
         onDelete={handleDelete}
       />
     </BackofficeLayout>

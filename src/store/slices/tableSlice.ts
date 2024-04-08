@@ -1,17 +1,76 @@
 import { config } from "@/config";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { CreateAddonCategoryPayload } from "@/types/addonCategory";
+import {
+  DeleteTablePayload,
+  TableSlice,
+  UpdateTablePayload,
+} from "@/types/table";
+import { Table } from "@prisma/client";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-interface TableSlice {}
-
-const initialState: TableSlice = {};
+const initialState: TableSlice = {
+  tables: [],
+  isLoading: false,
+  isError: null,
+};
 
 export const createTable = createAsyncThunk(
   "table/createTable",
-  async (payload, thunkApi) => {
+  async (payload: CreateAddonCategoryPayload, thunkApi) => {
+    const { onSuccess, onError, ...newTable } = payload;
     try {
-      const response = await fetch(`${config.backofficeApiBaseUrl}`);
+      const response = await fetch(`${config.backofficeApiBaseUrl}/table`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newTable),
+      });
       const {} = await response.json();
+      onSuccess && onSuccess();
     } catch (error) {
+      onError && onError();
+      console.error(error);
+    }
+  }
+);
+
+export const updateTable = createAsyncThunk(
+  "table/updateTable",
+  async (payload: UpdateTablePayload, thunkApi) => {
+    const { onSuccess, onError, ...updateTable } = payload;
+    try {
+      const response = await fetch(`${config.backofficeApiBaseUrl}/table`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateTable),
+      });
+      const {} = await response.json();
+      onSuccess && onSuccess();
+    } catch (error) {
+      onError && onError();
+      console.error(error);
+    }
+  }
+);
+
+export const deleteTable = createAsyncThunk(
+  "table/deleteTable",
+  async (payload: DeleteTablePayload, thunkApi) => {
+    const { onSuccess, onError, id } = payload;
+    try {
+      await fetch(`${config.backofficeApiBaseUrl}/table?id=${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      onSuccess && onSuccess();
+      thunkApi.dispatch(removeTable(id));
+    } catch (error) {
+      onError && onError();
       console.error(error);
     }
   }
@@ -20,8 +79,24 @@ export const createTable = createAsyncThunk(
 export const tableSlice = createSlice({
   name: "table",
   initialState,
-  reducers: {},
+  reducers: {
+    setTables: (state, action: PayloadAction<Table[]>) => {
+      state.tables = action.payload;
+    },
+    addTable: (state, action: PayloadAction<Table>) => {
+      state.tables = [...state.tables, action.payload];
+    },
+    replaceTable: (state, action: PayloadAction<Table>) => {
+      state.tables = state.tables.map((item) =>
+        item.id === action.payload.id ? action.payload : item
+      );
+    },
+    removeTable: (state, action: PayloadAction<number>) => {
+      state.tables = state.tables.filter((item) => item.id !== action.payload);
+    },
+  },
 });
 
-export const {} = tableSlice.actions;
+export const { setTables, addTable, replaceTable, removeTable } =
+  tableSlice.actions;
 export default tableSlice.reducer;

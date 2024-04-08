@@ -10,7 +10,7 @@ interface Props {
   subTitle?: string;
   price?: number;
   description?: string;
-  available?: boolean;
+  available?: boolean | number;
 }
 
 export default function ItemCard({
@@ -38,7 +38,7 @@ export default function ItemCard({
           justifyContent: "center",
           alignItems: "center",
           cursor: available ? "pointer" : "",
-          opacity: available ? 1 : 0.5,
+          opacity: available ? 1 : 0.4,
         }}
       >
         {icon}

@@ -19,7 +19,7 @@ const DeleteDialog = ({ open, setOpen, title, content, onDelete }: Props) => {
     <Dialog open={open} onClose={() => setOpen(false)}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>Are you sure you want to delete {content} ?</DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ mr: 2 }}>
         <Button
           onClick={() => setOpen(false)}
           sx={{ color: "#222831" }}
