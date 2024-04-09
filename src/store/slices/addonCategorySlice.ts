@@ -7,7 +7,11 @@ import {
 } from "@/types/addonCategory";
 import { AddonCategory } from "@prisma/client";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { setMenuAddonCategory } from "./menuAddonCategorySlice";
+import {
+  addMenuAddonCategory,
+  removeMenuAddonCategory,
+  setMenuAddonCategory,
+} from "./menuAddonCategorySlice";
 
 const initialState: AddonCategorySlice = {
   addonCategories: [],
@@ -30,10 +34,10 @@ export const createAddonCategory = createAsyncThunk(
           body: JSON.stringify(newAddonCategory),
         }
       );
-      const { addonCategory, menuAddonCategories } = await response.json();
+      const { addonCategory, menuAddonCategory } = await response.json();
       onSuccess && onSuccess();
       thunkApi.dispatch(addAddonCategory(addonCategory));
-      thunkApi.dispatch(setMenuAddonCategory(menuAddonCategories));
+      thunkApi.dispatch(addMenuAddonCategory(menuAddonCategory));
     } catch (error) {
       onError && onError();
       console.error(error);
@@ -56,8 +60,10 @@ export const updateAddonCategory = createAsyncThunk(
           body: JSON.stringify(updateAddonCategory),
         }
       );
-      const {} = await response.json();
+      const { addonCategory, menuAddonCategories } = await response.json();
       onSuccess && onSuccess();
+      thunkApi.dispatch(replaceAddonCategory(addonCategory));
+      thunkApi.dispatch(setMenuAddonCategory(menuAddonCategories));
     } catch (error) {
       onError && onError();
       console.error(error);
@@ -78,6 +84,7 @@ export const deleteAddonCategory = createAsyncThunk(
       });
       onSuccess && onSuccess();
       thunkApi.dispatch(removeAddonCategory(id));
+      thunkApi.dispatch(removeMenuAddonCategory(id));
     } catch (error) {
       onError && onError();
       console.error(error);

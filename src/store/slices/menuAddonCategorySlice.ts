@@ -18,8 +18,26 @@ export const menuAddonCategorySlice = createSlice({
     ) => {
       state.menuAddonCategories = action.payload;
     },
+    addMenuAddonCategory: (
+      state,
+      action: PayloadAction<MenuAddonCategory[]>
+    ) => {
+      state.menuAddonCategories = [
+        ...state.menuAddonCategories,
+        ...action.payload,
+      ];
+    },
+    removeMenuAddonCategory: (state, action: PayloadAction<number>) => {
+      state.menuAddonCategories = state.menuAddonCategories.filter(
+        (item) => item.addonCategoryId !== action.payload
+      );
+    },
   },
 });
 
-export const { setMenuAddonCategory } = menuAddonCategorySlice.actions;
+export const {
+  setMenuAddonCategory,
+  addMenuAddonCategory,
+  removeMenuAddonCategory,
+} = menuAddonCategorySlice.actions;
 export default menuAddonCategorySlice.reducer;

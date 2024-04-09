@@ -40,7 +40,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
   const { menuCategories } = useAppSelector((store) => store.menuCategory);
 
   const handleCreate = () => {
-    if (!newMenu.name || newMenu.menuCategoryIds.length === 0) {
+    if (!newMenu.name.trim() || newMenu.menuCategoryIds.length === 0) {
       return dispatch(
         openSneakbar({
           type: "error",

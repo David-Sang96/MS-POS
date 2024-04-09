@@ -24,6 +24,13 @@ export default async function handler(
   } else if (method === "PUT") {
     const { id, isAvailable, locationId, name, price, menuCategoryIds } =
       req.body;
+    const isValid =
+      isAvailable !== undefined &&
+      locationId &&
+      name &&
+      price !== undefined &&
+      menuCategoryIds.length !== 0;
+    if (!isValid) return res.status(400).send("Bad Request");
     const exitedMenu = await prisma.menu.findFirst({ where: { id } });
     if (!exitedMenu) return res.status(400).send("Bad Request");
     const menu = await prisma.menu.update({

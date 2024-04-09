@@ -66,7 +66,7 @@ const MenuDetails = () => {
   }, [menu]);
 
   const handleUpdate = () => {
-    if (!updatedMenu?.name || selectedItem.length === 0) {
+    if (!updatedMenu?.name.trim() || selectedItem.length === 0) {
       return dispatch(
         openSneakbar({ type: "error", message: "Missing required Data." })
       );

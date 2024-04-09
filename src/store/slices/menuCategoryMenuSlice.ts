@@ -18,9 +18,21 @@ export const menuCategoryMenuSlice = createSlice({
     ) => {
       state.menuCategoryMenus = action.payload;
     },
+    addMenuCategoryMenu: (state, action: PayloadAction<MenuCategoryMenu[]>) => {
+      state.menuCategoryMenus = [...state.menuCategoryMenus, ...action.payload];
+    },
+    removeMenuCategoryMenu: (state, action: PayloadAction<number>) => {
+      state.menuCategoryMenus = state.menuCategoryMenus.filter(
+        (item) => item.menuId !== action.payload
+      );
+    },
   },
 });
 
-export const { setMenuCategoryMenus } = menuCategoryMenuSlice.actions;
+export const {
+  setMenuCategoryMenus,
+  addMenuCategoryMenu,
+  removeMenuCategoryMenu,
+} = menuCategoryMenuSlice.actions;
 
 export default menuCategoryMenuSlice.reducer;

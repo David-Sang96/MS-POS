@@ -8,7 +8,11 @@ import {
 import { Menu } from "@prisma/client";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { setDisableLocationMenus } from "./disableLocationMenuSlice";
-import { setMenuCategoryMenus } from "./menuCategoryMenuSlice";
+import {
+  addMenuCategoryMenu,
+  removeMenuCategoryMenu,
+  setMenuCategoryMenus,
+} from "./menuCategoryMenuSlice";
 
 const initialState: MenuSlice = {
   menus: [],
@@ -29,7 +33,7 @@ export const createMenu = createAsyncThunk(
     });
     const { menu, menuCategoryMenus } = await response.json();
     onSuccess && onSuccess();
-    thunkApi.dispatch(setMenuCategoryMenus(menuCategoryMenus));
+    thunkApi.dispatch(addMenuCategoryMenu(menuCategoryMenus));
     return menu;
   }
 );
@@ -69,8 +73,9 @@ export const deleteMenu = createAsyncThunk(
           "Content-Type": "application/json",
         },
       });
-      thunkApi.dispatch(removeMenu(id));
       onSuccess && onSuccess();
+      thunkApi.dispatch(removeMenu(id));
+      thunkApi.dispatch(removeMenuCategoryMenu(id));
     } catch (error) {
       onError && onError();
       console.error(error);

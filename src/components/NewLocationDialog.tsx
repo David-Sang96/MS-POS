@@ -37,7 +37,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
   const handleCreate = () => {
     const isValid =
       newLocation.city &&
-      newLocation.name &&
+      newLocation.name.trim() &&
       newLocation.street &&
       newLocation.township;
     if (!isValid) {

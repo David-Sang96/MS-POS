@@ -83,12 +83,13 @@ const MenuCategoryDetails = () => {
 
   const handleUpdate = () => {
     if (
-      updatedMenuCategory?.name?.trim() === menuCategory?.name.trim() &&
+      !updatedMenuCategory.name.trim() &&
       updatedMenuCategory.isAvailable === isAvailable
     ) {
-      return router.push("/backoffice/menu-category");
+      return dispatch(
+        openSneakbar({ type: "error", message: "Missing required data." })
+      );
     }
-
     dispatch(
       updateMenuCategory({
         ...updatedMenuCategory,
@@ -168,7 +169,7 @@ const MenuCategoryDetails = () => {
         />
         <Button
           disabled={
-            updatedMenuCategory.name === menuCategory?.name &&
+            updatedMenuCategory.name.trim() === menuCategory?.name.trim() &&
             updatedMenuCategory.isAvailable === isAvailable
           }
           variant="contained"

@@ -2,7 +2,10 @@
 import BackofficeLayout from "@/components/BackofficeLayout";
 import DeleteDialog from "@/components/DeleteDialog";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { deleteAddonCategory } from "@/store/slices/addonCategorySlice";
+import {
+  deleteAddonCategory,
+  updateAddonCategory,
+} from "@/store/slices/addonCategorySlice";
 import { openSneakbar } from "@/store/slices/sneakbarSlice";
 import { UpdateAddonCategoryPayload } from "@/types/addonCategory";
 import {
@@ -25,7 +28,7 @@ import { useEffect, useState } from "react";
 
 const AddonCategoryDetails = () => {
   const [open, setOpen] = useState(false);
-  const [updateAddonCategory, setUpdateAddonCategory] =
+  const [updatedAddonCategory, setUpdatedAddonCategory] =
     useState<UpdateAddonCategoryPayload>();
   const [menuIds, setMenuIds] = useState<number[]>([]);
   const router = useRouter();
@@ -40,15 +43,20 @@ const AddonCategoryDetails = () => {
     .map((item) => item.menuId);
   const { menus } = useAppSelector((store) => store.menu);
   const dispatch = useAppDispatch();
+  const { selectedLocation } = useAppSelector((store) => store.app);
 
   useEffect(() => {
     if (addonCategory) {
-      setUpdateAddonCategory({ ...addonCategory, menuIds: selectedMenuIds });
+      setUpdatedAddonCategory({
+        ...addonCategory,
+        menuIds: selectedMenuIds,
+        locationId: selectedLocation?.id,
+      });
       setMenuIds(selectedMenuIds);
     }
   }, [addonCategory]);
 
-  if (!updateAddonCategory) {
+  if (!updatedAddonCategory) {
     return (
       <BackofficeLayout>
         <Box
@@ -98,7 +106,30 @@ const AddonCategoryDetails = () => {
       })
     );
   };
-  const handelUpdate = () => {};
+  const handelUpdate = () => {
+    if (!updatedAddonCategory.name.trim() || menuIds.length === 0) {
+      return dispatch(
+        openSneakbar({ type: "error", message: "Missing required data." })
+      );
+    }
+    dispatch(
+      updateAddonCategory({
+        ...updatedAddonCategory,
+        menuIds,
+        onSuccess: () => {
+          dispatch(
+            openSneakbar({ type: "success", message: "updated successfully" })
+          );
+          router.push("/backoffice/addon-category");
+        },
+        onError: () => {
+          dispatch(
+            openSneakbar({ type: "error", message: "failed to update" })
+          );
+        },
+      })
+    );
+  };
 
   return (
     <BackofficeLayout>
@@ -108,7 +139,16 @@ const AddonCategoryDetails = () => {
         </Button>
       </Box>
       <Box sx={{ width: 400, ml: 2 }}>
-        <TextField defaultValue={addonCategory?.name} sx={{ width: "100%" }} />
+        <TextField
+          defaultValue={addonCategory?.name}
+          sx={{ width: "100%" }}
+          onChange={(e) =>
+            setUpdatedAddonCategory({
+              ...updatedAddonCategory,
+              name: e.target.value,
+            })
+          }
+        />
         <FormControl sx={{ width: "100%", my: 2 }}>
           <InputLabel>Menu</InputLabel>
           <Select

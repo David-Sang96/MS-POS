@@ -12,6 +12,7 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
+  FormControlLabel,
   InputLabel,
   ListItemText,
   MenuItem,
@@ -29,7 +30,6 @@ interface Props {
 
 const defaultNewAddonCategory = {
   name: "",
-  price: 0,
   isRequired: true,
   menuIds: [],
 };
@@ -43,7 +43,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
   const { menus } = useAppSelector((store) => store.menu);
 
   const handleCreate = () => {
-    if (!newAddonCategory?.name || selectedMenuIds.length === 0) {
+    if (!newAddonCategory.name.trim() || !selectedMenuIds.length) {
       return dispatch(
         openSneakbar({
           type: "error",
@@ -93,20 +93,9 @@ const DialogBox = ({ open, setOpen }: Props) => {
           onChange={(e) =>
             setNewAddonCategory({ ...newAddonCategory, name: e.target.value })
           }
-          sx={{ width: "100%", my: 2 }}
+          sx={{ width: "100%", my: 1 }}
         />
-        <TextField
-          label="Price"
-          type="number"
-          onChange={(e) =>
-            setNewAddonCategory({
-              ...newAddonCategory,
-              price: Number(e.target.value),
-            })
-          }
-          sx={{ width: "100%" }}
-        />
-        <FormControl sx={{ width: "100%", mt: 2 }}>
+        <FormControl sx={{ width: "100%", my: 1 }}>
           <InputLabel>Menu</InputLabel>
           <Select
             multiple
@@ -135,6 +124,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
             })}
           </Select>
         </FormControl>
+        <FormControlLabel control={<Checkbox />} label="Required" />
       </DialogContent>
       <DialogActions sx={{ mr: 2 }}>
         <Button
