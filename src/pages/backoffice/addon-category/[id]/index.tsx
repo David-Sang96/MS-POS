@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import BackofficeLayout from "@/components/BackofficeLayout";
 import DeleteDialog from "@/components/DeleteDialog";
+import MultiSelectInput from "@/components/MultiSelectInput";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   deleteAddonCategory,
@@ -12,17 +13,10 @@ import {
   Box,
   Button,
   Checkbox,
-  FormControl,
   FormControlLabel,
-  InputLabel,
-  ListItemText,
-  MenuItem,
-  OutlinedInput,
-  Select,
   TextField,
   Typography,
 } from "@mui/material";
-import { Menu } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -141,7 +135,7 @@ const AddonCategoryDetails = () => {
       <Box sx={{ width: 400, ml: 2 }}>
         <TextField
           defaultValue={addonCategory?.name}
-          sx={{ width: "100%" }}
+          sx={{ width: "100%", mb: 2 }}
           onChange={(e) =>
             setUpdatedAddonCategory({
               ...updatedAddonCategory,
@@ -149,37 +143,28 @@ const AddonCategoryDetails = () => {
             })
           }
         />
-        <FormControl sx={{ width: "100%", my: 2 }}>
-          <InputLabel>Menu</InputLabel>
-          <Select
-            multiple
-            value={menuIds}
-            onChange={(e) => {
-              const selectedValue = e.target.value as number[];
-              setMenuIds(selectedValue);
-            }}
-            renderValue={() =>
-              menuIds
-                .map(
-                  (menuId) => menus.find((item) => item.id === menuId) as Menu
-                )
-                .map((item) => item?.name)
-                .join(", ")
-            }
-            input={<OutlinedInput label="Menu" />}
-          >
-            {menus.map((menu) => {
-              return (
-                <MenuItem key={menu.id} value={menu.id}>
-                  <Checkbox checked={menuIds.includes(menu.id)} />
-                  <ListItemText primary={menu.name} />
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
+
+        <MultiSelectInput
+          title="Menu"
+          selectedIds={menuIds}
+          setSelectedIds={setMenuIds}
+          items={menus}
+        />
         <Box>
-          <FormControlLabel control={<Checkbox />} label="required" />
+          <FormControlLabel
+            control={
+              <Checkbox
+                defaultChecked={addonCategory?.isRequired}
+                onChange={(e, value) =>
+                  setUpdatedAddonCategory({
+                    ...updatedAddonCategory,
+                    isRequired: value,
+                  })
+                }
+              />
+            }
+            label="required"
+          />
         </Box>
         <Button
           variant="contained"

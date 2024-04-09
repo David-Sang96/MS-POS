@@ -5,22 +5,15 @@ import { CreateMenuPayload } from "@/types/menu";
 import {
   Box,
   Button,
-  Checkbox,
   CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
-  InputLabel,
-  ListItemText,
-  MenuItem,
-  OutlinedInput,
-  Select,
   TextField,
 } from "@mui/material";
-import { MenuCategory } from "@prisma/client";
 import { useState } from "react";
+import MultiSelectInput from "./MultiSelectInput";
 
 interface Props {
   open: boolean;
@@ -35,12 +28,13 @@ const defaultNewMenu = {
 
 const DialogBox = ({ open, setOpen }: Props) => {
   const [newMenu, setNewMenu] = useState<CreateMenuPayload>(defaultNewMenu);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((store) => store.menu);
   const { menuCategories } = useAppSelector((store) => store.menuCategory);
 
   const handleCreate = () => {
-    if (!newMenu.name.trim() || newMenu.menuCategoryIds.length === 0) {
+    if (!newMenu.name.trim() || !selectedIds.length) {
       return dispatch(
         openSneakbar({
           type: "error",
@@ -51,6 +45,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
     dispatch(
       createMenu({
         ...newMenu,
+        menuCategoryIds: selectedIds,
         onSuccess: () => {
           dispatch(
             openSneakbar({
@@ -59,6 +54,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
             })
           );
           setOpen(false);
+          setSelectedIds([]);
         },
         onError: () => {
           dispatch(
@@ -78,7 +74,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
       open={open}
       onClose={() => {
         setOpen(false);
-        setNewMenu(defaultNewMenu);
+        setSelectedIds([]);
       }}
     >
       <DialogTitle>Create New Menu</DialogTitle>
@@ -97,36 +93,12 @@ const DialogBox = ({ open, setOpen }: Props) => {
           }
           sx={{ width: "100%", my: 2 }}
         />
-        <FormControl sx={{ width: "100%" }}>
-          <InputLabel>MenuCategory</InputLabel>
-          <Select
-            input={<OutlinedInput label="MenuCategory" />}
-            multiple
-            value={newMenu.menuCategoryIds}
-            onChange={(evt) => {
-              const item = evt.target.value as number[];
-              setNewMenu({ ...newMenu, menuCategoryIds: item });
-            }}
-            renderValue={() =>
-              newMenu.menuCategoryIds
-                .map(
-                  (itemId) =>
-                    menuCategories.find(
-                      (menuCategory) => menuCategory.id === itemId
-                    ) as MenuCategory
-                )
-                .map((item) => item.name)
-                .join(", ")
-            }
-          >
-            {menuCategories.map((item) => (
-              <MenuItem key={item.id} value={item.id}>
-                <Checkbox checked={newMenu.menuCategoryIds.includes(item.id)} />
-                <ListItemText primary={item.name} />
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <MultiSelectInput
+          title="Menu Category"
+          items={menuCategories}
+          selectedIds={selectedIds}
+          setSelectedIds={setSelectedIds}
+        />
       </DialogContent>
       <DialogActions sx={{ mr: 2 }}>
         <Button
@@ -134,7 +106,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
           variant="text"
           onClick={() => {
             setOpen(false);
-            setNewMenu(defaultNewMenu);
+            setSelectedIds([]);
           }}
         >
           cancel

@@ -8,6 +8,7 @@ import { signOut, useSession } from "next-auth/react";
 export default function NavBar() {
   const { data } = useSession();
   const { selectedLocation } = useAppSelector((store) => store.app);
+
   return (
     <AppBar
       position="static"

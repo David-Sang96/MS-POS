@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { createMenu } from "@/store/slices/menuSlice";
+import { createAddon } from "@/store/slices/addonSlice";
 import { openSneakbar } from "@/store/slices/sneakbarSlice";
+import { CreateAddonPayload } from "@/types/addon";
 import {
   Box,
   Button,
@@ -9,6 +10,10 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
 } from "@mui/material";
 import { useState } from "react";
@@ -21,25 +26,29 @@ interface Props {
 const defaultNewAddon = {
   name: "",
   price: 0,
+  addonCategoryId: 0,
 };
 
 const DialogBox = ({ open, setOpen }: Props) => {
-  const [newAddon, setNewAddon] = useState(defaultNewAddon);
+  const [newAddon, setNewAddon] = useState<CreateAddonPayload>(defaultNewAddon);
+  const [selectedId, setSelectedId] = useState<any>();
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((store) => store.menu);
+  const { addonCategories } = useAppSelector((store) => store.addonCategory);
 
   const handleCreate = () => {
-    if (!newAddon.name) {
+    if (!newAddon.name.trim()) {
       dispatch(
         openSneakbar({
           type: "error",
-          message: "name is required.",
+          message: "Missing required data.",
         })
       );
     }
     dispatch(
-      createMenu({
+      createAddon({
         ...newAddon,
+        addonCategoryId: selectedId,
         onSuccess: () => {
           dispatch(
             openSneakbar({
@@ -48,6 +57,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
             })
           );
           setOpen(false);
+          setSelectedId("");
         },
         onError: () => {
           dispatch(
@@ -67,7 +77,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
       open={open}
       onClose={() => {
         setOpen(false);
-        setNewAddon(defaultNewAddon);
+        setSelectedId("");
       }}
     >
       <DialogTitle>Create New Addon</DialogTitle>
@@ -76,7 +86,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
           label="Name"
           type="text"
           onChange={(e) => setNewAddon({ ...newAddon, name: e.target.value })}
-          sx={{ width: "100%", my: 2 }}
+          sx={{ width: "100%", mt: 1 }}
         />
         <TextField
           label="Price"
@@ -84,8 +94,22 @@ const DialogBox = ({ open, setOpen }: Props) => {
           onChange={(e) =>
             setNewAddon({ ...newAddon, price: Number(e.target.value) })
           }
-          sx={{ width: "100%" }}
+          sx={{ width: "100%", my: 1 }}
         />
+        <FormControl fullWidth>
+          <InputLabel>Addon Category</InputLabel>
+          <Select
+            value={selectedId}
+            label="Addon Category"
+            onChange={(e) => setSelectedId(e.target.value as number)}
+          >
+            {addonCategories.map((item) => (
+              <MenuItem key={item.id} value={item.id}>
+                {item.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </DialogContent>
       <DialogActions>
         <Button
@@ -93,7 +117,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
           variant="text"
           onClick={() => {
             setOpen(false);
-            setNewAddon(defaultNewAddon);
+            setSelectedId("");
           }}
         >
           cancel

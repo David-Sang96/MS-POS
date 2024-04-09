@@ -19,5 +19,5 @@ export default async function handler(
     await prisma.table.update({ data: { isArchived: true }, where: { id } });
     return res.status(200).send("Deleted");
   }
-  res.status(405).json({ message: "Not Found" });
+  res.status(405).json({ message: "Invalid Method" });
 }

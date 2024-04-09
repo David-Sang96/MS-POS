@@ -11,17 +11,11 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
   FormControlLabel,
-  InputLabel,
-  ListItemText,
-  MenuItem,
-  OutlinedInput,
-  Select,
   TextField,
 } from "@mui/material";
-import { Menu } from "@prisma/client";
 import { useState } from "react";
+import MultiSelectInput from "./MultiSelectInput";
 
 interface Props {
   open: boolean;
@@ -63,6 +57,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
             })
           );
           setOpen(false);
+          setSelectedMenuIds([]);
         },
         onError: () => {
           dispatch(
@@ -95,36 +90,23 @@ const DialogBox = ({ open, setOpen }: Props) => {
           }
           sx={{ width: "100%", my: 1 }}
         />
-        <FormControl sx={{ width: "100%", my: 1 }}>
-          <InputLabel>Menu</InputLabel>
-          <Select
-            multiple
-            value={selectedMenuIds}
-            onChange={(e) => {
-              const selectedMenuId = e.target.value as number[];
-              setSelectedMenuIds(selectedMenuId);
-            }}
-            renderValue={() =>
-              selectedMenuIds
-                .map(
-                  (menuId) => menus.find((item) => item.id === menuId) as Menu
-                )
-                .map((item) => item?.name)
-                .join(", ")
-            }
-            input={<OutlinedInput label="Menu" />}
-          >
-            {menus.map((menu) => {
-              return (
-                <MenuItem key={menu.id} value={menu.id}>
-                  <Checkbox checked={selectedMenuIds.includes(menu.id)} />
-                  <ListItemText primary={menu.name} />
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
-        <FormControlLabel control={<Checkbox />} label="Required" />
+        <MultiSelectInput
+          title="Menu"
+          selectedIds={selectedMenuIds}
+          setSelectedIds={setSelectedMenuIds}
+          items={menus}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              defaultChecked={newAddonCategory.isRequired}
+              onChange={(e, value) =>
+                setNewAddonCategory({ ...newAddonCategory, isRequired: value })
+              }
+            />
+          }
+          label="Required"
+        />
       </DialogContent>
       <DialogActions sx={{ mr: 2 }}>
         <Button

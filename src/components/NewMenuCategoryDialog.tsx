@@ -33,6 +33,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
 
   const handleCreate = () => {
     if (!newMenuCategory.name.trim()) {
+      console.log("hi");
       return dispatch(
         openSneakbar({
           type: "error",

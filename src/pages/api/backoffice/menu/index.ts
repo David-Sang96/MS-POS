@@ -117,5 +117,5 @@ export default async function handler(
     await prisma.menuCategoryMenu.deleteMany({ where: { menuId: id } });
     return res.status(200).send("Delete");
   }
-  res.status(405).json({ message: "Not Found" });
+  res.status(405).json({ message: "Invalid Method" });
 }

@@ -93,5 +93,5 @@ export default async function handler(
 
     return res.status(200).send("Deleted");
   }
-  res.status(405).json({ message: "Not Found" });
+  res.status(405).json({ message: "Invalid Method" });
 }
