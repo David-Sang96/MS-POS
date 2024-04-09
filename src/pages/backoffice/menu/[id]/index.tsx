@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import BackofficeLayout from "@/components/BackofficeLayout";
 import DeleteDialog from "@/components/DeleteDialog";
+import MultiSelectInput from "@/components/MultiSelectInput";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { deleteMenu, updateMenu } from "@/store/slices/menuSlice";
 import { openSneakbar } from "@/store/slices/sneakbarSlice";
@@ -9,13 +10,7 @@ import {
   Box,
   Button,
   Checkbox,
-  FormControl,
   FormControlLabel,
-  InputLabel,
-  ListItemText,
-  MenuItem,
-  OutlinedInput,
-  Select,
   TextField,
   Typography,
 } from "@mui/material";
@@ -162,36 +157,12 @@ const MenuDetails = () => {
           }
           sx={{ width: "100%", my: 2 }}
         />
-        <FormControl sx={{ width: "100%" }}>
-          <InputLabel>MenuCategory</InputLabel>
-          <Select
-            multiple
-            value={selectedItem}
-            renderValue={() =>
-              selectedItem
-                .map(
-                  (itemId) =>
-                    menuCategories.find(
-                      (menuCategory) => menuCategory.id === itemId
-                    ) as MenuCategory
-                )
-                .map((item) => item?.name)
-                .join(", ")
-            }
-            onChange={(e) => {
-              const selected = e.target.value as number[];
-              setSelectedItem(selected);
-            }}
-            input={<OutlinedInput label="MenuCategory" />}
-          >
-            {menuCategories.map((item) => (
-              <MenuItem key={item.id} value={item.id}>
-                <Checkbox checked={selectedItem.includes(item.id)} />
-                <ListItemText primary={item.name} />
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <MultiSelectInput
+          title="Menu Category"
+          selectedIds={selectedItem}
+          setSelectedIds={setSelectedItem}
+          items={menuCategories}
+        />
         <FormControlLabel
           control={
             <Checkbox

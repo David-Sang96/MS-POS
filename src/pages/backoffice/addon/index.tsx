@@ -8,7 +8,7 @@ import { useState } from "react";
 
 const Addon = () => {
   const [open, setOpen] = useState(false);
-  const { addons } = useAppSelector((store) => store.addon);
+  const addons = useAppSelector((store) => store.addon.addons);
 
   return (
     <BackofficeLayout>
@@ -37,7 +37,7 @@ const Addon = () => {
                 />
               }
               href={`/backoffice/addon/${item.id}`}
-              available={true}
+              available
             />
           </Box>
         ))}

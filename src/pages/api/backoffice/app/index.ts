@@ -149,7 +149,7 @@ export default async function handler(
           menuCategoryMenus: [menuCategoryMenu],
           addonCategories: [addonCategory],
           menuAddonCategories: [menuAddonCategory],
-          addons: [addon],
+          addons: addon,
           locations: [location],
           tables: [table],
         });
@@ -162,5 +162,5 @@ export default async function handler(
   } else if (method === "DELETE") {
     return res.status(200).json({ message: "OK DELETE app" });
   }
-  res.status(405).json({ message: "Not Found" });
+  res.status(405).json({ message: "Invalid Method" });
 }

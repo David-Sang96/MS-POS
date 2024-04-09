@@ -7,7 +7,13 @@ export interface AddonSlice {
   isError: Error | null;
 }
 
-export interface CreateAddonPayload extends Addon, BaseOption {}
+export interface UpdateAddonPayload extends Addon, BaseOption {}
+
+export interface CreateAddonPayload extends BaseOption {
+  name: string;
+  price: number;
+  addonCategoryId: number;
+}
 
 export interface DeleteAddonPayload extends BaseOption {
   id: number;

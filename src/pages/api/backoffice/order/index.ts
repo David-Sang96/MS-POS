@@ -11,5 +11,5 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   } else if (method === "DELETE") {
     return res.status(200).json({ message: "OK DELETE order" });
   }
-  res.status(405).json({ message: "Not Found" });
+  res.status(405).json({ message: "Invalid Method" });
 }

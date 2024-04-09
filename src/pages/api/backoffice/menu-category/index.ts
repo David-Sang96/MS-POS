@@ -9,6 +9,7 @@ export default async function handler(
   if (method === "GET") {
     return res.status(200).json({ message: "OK GET menu-category" });
   } else if (method === "POST") {
+    console.log(req.body);
     const { name, companyId } = req.body;
     const isValid = name && companyId;
     if (!isValid) return res.status(400).send("Bad Request");
@@ -67,5 +68,5 @@ export default async function handler(
     });
     return res.status(200).send("Deleted");
   }
-  res.status(405).json({ message: "Not Found" });
+  res.status(405).json({ message: "Invalid Method" });
 }

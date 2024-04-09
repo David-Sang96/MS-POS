@@ -37,7 +37,7 @@ const AddonCategory = () => {
                 />
               }
               href={`/backoffice/addon-category/${item.id}`}
-              available={true}
+              available
             />
           </Box>
         ))}
