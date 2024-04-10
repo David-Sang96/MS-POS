@@ -1,19 +1,11 @@
 import BackofficeLayout from "@/components/BackofficeLayout";
 import DeleteDialog from "@/components/DeleteDialog";
+import SingleSelectInput from "@/components/SingleSelectInput";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { deleteAddon, updateAddon } from "@/store/slices/addonSlice";
 import { openSneakbar } from "@/store/slices/sneakbarSlice";
 import { UpdateAddonPayload } from "@/types/addon";
-import {
-  Box,
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -27,16 +19,13 @@ const AddonDetails = () => {
   const addon = addons.find((item) => item.id === id);
   const dispatch = useAppDispatch();
   const { addonCategories } = useAppSelector((store) => store.addonCategory);
-  const selectedAddonCategoryId = addonCategories.find(
-    (addonCategory) => addonCategory.id === addon?.addonCategoryId
-  );
 
   useEffect(() => {
-    if (addon && selectedAddonCategoryId) {
+    if (addon) {
       setUpdatedAddon(addon);
-      setSelectedId(selectedAddonCategoryId.id);
+      setSelectedId(addon.addonCategoryId);
     }
-  }, [addon, selectedAddonCategoryId]);
+  }, [addon]);
 
   if (!updatedAddon) {
     return (
@@ -138,20 +127,12 @@ const AddonDetails = () => {
           }
           sx={{ width: "100%", my: 2 }}
         />
-        <FormControl fullWidth>
-          <InputLabel>Addon Category</InputLabel>
-          <Select
-            value={selectedId}
-            label="Addon Category"
-            onChange={(e) => setSelectedId(e.target.value as number)}
-          >
-            {addonCategories.map((item) => (
-              <MenuItem key={item.id} value={item.id}>
-                {item.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <SingleSelectInput
+          title="Addon Category"
+          selectedId={selectedId}
+          setSelectedId={setSelectedId}
+          items={addonCategories}
+        />
         <Box>
           <Button
             variant="contained"

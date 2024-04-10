@@ -1,6 +1,6 @@
 import { config } from "@/config";
-import { CreateAddonCategoryPayload } from "@/types/addonCategory";
 import {
+  CreateTablePayload,
   DeleteTablePayload,
   TableSlice,
   UpdateTablePayload,
@@ -16,7 +16,7 @@ const initialState: TableSlice = {
 
 export const createTable = createAsyncThunk(
   "table/createTable",
-  async (payload: CreateAddonCategoryPayload, thunkApi) => {
+  async (payload: CreateTablePayload, thunkApi) => {
     const { onSuccess, onError, ...newTable } = payload;
     try {
       const response = await fetch(`${config.backofficeApiBaseUrl}/table`, {
@@ -26,8 +26,10 @@ export const createTable = createAsyncThunk(
         },
         body: JSON.stringify(newTable),
       });
-      const {} = await response.json();
+      const { table } = await response.json();
+      console.log(table);
       onSuccess && onSuccess();
+      thunkApi.dispatch(addTable(table));
     } catch (error) {
       onError && onError();
       console.error(error);
@@ -47,8 +49,9 @@ export const updateTable = createAsyncThunk(
         },
         body: JSON.stringify(updateTable),
       });
-      const {} = await response.json();
+      const { table } = await response.json();
       onSuccess && onSuccess();
+      thunkApi.dispatch(replaceTable(table));
     } catch (error) {
       onError && onError();
       console.error(error);

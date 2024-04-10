@@ -9,9 +9,24 @@ export default async function handler(
   if (method === "GET") {
     return res.status(200).json({ message: "OK GET table" });
   } else if (method === "POST") {
-    return res.status(200).json({ message: "OK POST table" });
+    const { name, locationId, assetUrl } = req.body;
+    const isValid = name && locationId && assetUrl !== undefined;
+    if (!isValid) return res.status(400).send("Bad Request");
+    const table = await prisma.table.create({
+      data: { name, locationId, assetUrl },
+    });
+    return res.status(201).json({ table });
   } else if (method === "PUT") {
-    return res.status(200).json({ message: "OK PUT table" });
+    const { id, name, locationId, assetUrl } = req.body;
+    const isValid = name && locationId && assetUrl !== undefined && id;
+    if (!isValid) return res.status(400).send("Bad Request");
+    const isExisted = await prisma.table.findFirst({ where: { id } });
+    if (!isExisted) return res.status(400).send("Bad Request");
+    const table = await prisma.table.update({
+      data: { name, locationId, assetUrl },
+      where: { id },
+    });
+    return res.status(200).json({ table });
   } else if (method === "DELETE") {
     const id = Number(req.query.id);
     const exitedTable = await prisma.table.findFirst({ where: { id } });

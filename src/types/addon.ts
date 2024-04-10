@@ -12,7 +12,7 @@ export interface UpdateAddonPayload extends Addon, BaseOption {}
 export interface CreateAddonPayload extends BaseOption {
   name: string;
   price: number;
-  addonCategoryId: number;
+  addonCategoryId: number | undefined;
 }
 
 export interface DeleteAddonPayload extends BaseOption {

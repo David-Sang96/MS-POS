@@ -50,6 +50,7 @@ export const updateLocation = createAsyncThunk(
       });
       const { updatedLocation } = await response.json();
       thunkApi.dispatch(replaceLocation(updatedLocation));
+
       onSuccess && onSuccess();
     } catch (error) {
       console.error(error);

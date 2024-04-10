@@ -1,4 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { openSneakbar } from "@/store/slices/sneakbarSlice";
+import { createTable } from "@/store/slices/tableSlice";
+import { CreateTablePayload } from "@/types/table";
 import {
   Box,
   Button,
@@ -16,12 +20,46 @@ interface Props {
   setOpen: (value: boolean) => void;
 }
 
+const defaultTable = {
+  name: "",
+  locationId: undefined,
+  assetUrl: "",
+};
+
 const DialogBox = ({ open, setOpen }: Props) => {
-  const [newTable, setNewTable] = useState();
+  const [newTable, setNewTable] = useState<CreateTablePayload>(defaultTable);
+
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((store) => store.menu);
+  const { selectedLocation } = useAppSelector((store) => store.app);
 
-  const handleCreate = () => {};
+  const handleCreate = () => {
+    if (!newTable.name || !selectedLocation?.id) {
+      return dispatch(
+        openSneakbar({ type: "error", message: "Missing required data" })
+      );
+    }
+    dispatch(
+      createTable({
+        ...newTable,
+        locationId: selectedLocation?.id,
+        onSuccess: () => {
+          dispatch(
+            openSneakbar({
+              type: "success",
+              message: "created table successfully",
+            })
+          );
+          setOpen(false);
+        },
+        onError: () => {
+          dispatch(
+            openSneakbar({ type: "error", message: "failed to create" })
+          );
+        },
+      })
+    );
+  };
 
   return (
     <Dialog
@@ -35,17 +73,13 @@ const DialogBox = ({ open, setOpen }: Props) => {
         <TextField
           label="Name"
           type="text"
-          onChange={(e) => {}}
-          sx={{ width: "100%", my: 2 }}
-        />
-        <TextField
-          label="Price"
-          type="number"
-          onChange={(e) => {}}
-          sx={{ width: "100%" }}
+          onChange={(e) => {
+            setNewTable({ ...newTable, name: e.target.value });
+          }}
+          sx={{ width: "100%", mt: 1 }}
         />
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ mr: 2 }}>
         <Button
           sx={{ color: "#222831" }}
           variant="text"

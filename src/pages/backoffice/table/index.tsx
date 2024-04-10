@@ -8,7 +8,11 @@ import { useState } from "react";
 
 const Table = () => {
   const [open, setOpen] = useState(false);
+  const { selectedLocation } = useAppSelector((store) => store.app);
   const { tables } = useAppSelector((store) => store.table);
+  const relatedTables = tables.filter(
+    (item) => item.locationId === selectedLocation?.id
+  );
 
   return (
     <BackofficeLayout>
@@ -27,7 +31,7 @@ const Table = () => {
       </Box>
       <NewTableDialog open={open} setOpen={setOpen} />
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.1, mt: 2 }}>
-        {tables.map((item) => (
+        {relatedTables.map((item) => (
           <Box key={item.id}>
             <ItemCard
               title={item.name}

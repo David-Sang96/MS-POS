@@ -22,6 +22,7 @@ export default function NavBar() {
         >
           Foodie POS
         </Typography>
+
         <Typography
           variant="h5"
           component="div"
@@ -29,6 +30,7 @@ export default function NavBar() {
         >
           {selectedLocation?.name}
         </Typography>
+
         {data && (
           <Button
             sx={{

@@ -19,7 +19,7 @@ export default async function handler(
     return res.status(201).json({ addon });
   } else if (method === "PUT") {
     const { name, price, addonCategoryId, id } = req.body;
-    const isValid = name && price !== undefined && addonCategoryId;
+    const isValid = name && price !== undefined && addonCategoryId && id;
     if (!isValid) return res.status(400).send("Bad Request");
     const isExisted = await prisma.addon.findFirst({ where: { id } });
     if (!isExisted) return res.status(400).send("Bad Request");

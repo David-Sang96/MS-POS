@@ -7,8 +7,12 @@ export interface TableSlice {
   isError: Error | null;
 }
 
-export interface CreateTablePayload extends Table, BaseOption {}
-export interface UpdateTablePayload extends BaseOption {}
+export interface CreateTablePayload extends BaseOption {
+  name: string;
+  locationId?: number;
+  assetUrl: string;
+}
+export interface UpdateTablePayload extends Table, BaseOption {}
 export interface DeleteTablePayload extends BaseOption {
   id: number;
 }
