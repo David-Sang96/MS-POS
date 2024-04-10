@@ -1,11 +1,27 @@
 import BackofficeLayout from "@/components/BackofficeLayout";
 import DeleteDialog from "@/components/DeleteDialog";
+<<<<<<< HEAD
 import SingleSelectInput from "@/components/SingleSelectInput";
+=======
+>>>>>>> bd9ceb323b757bfbc12d4514f81b382b95a05f2e
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { deleteAddon, updateAddon } from "@/store/slices/addonSlice";
 import { openSneakbar } from "@/store/slices/sneakbarSlice";
 import { UpdateAddonPayload } from "@/types/addon";
+<<<<<<< HEAD
 import { Box, Button, TextField, Typography } from "@mui/material";
+=======
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+>>>>>>> bd9ceb323b757bfbc12d4514f81b382b95a05f2e
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -19,6 +35,7 @@ const AddonDetails = () => {
   const addon = addons.find((item) => item.id === id);
   const dispatch = useAppDispatch();
   const { addonCategories } = useAppSelector((store) => store.addonCategory);
+<<<<<<< HEAD
 
   useEffect(() => {
     if (addon) {
@@ -26,6 +43,18 @@ const AddonDetails = () => {
       setSelectedId(addon.addonCategoryId);
     }
   }, [addon]);
+=======
+  const selectedAddonCategoryId = addonCategories.find(
+    (addonCategory) => addonCategory.id === addon?.addonCategoryId
+  );
+
+  useEffect(() => {
+    if (addon && selectedAddonCategoryId) {
+      setUpdatedAddon(addon);
+      setSelectedId(selectedAddonCategoryId.id);
+    }
+  }, [addon, selectedAddonCategoryId]);
+>>>>>>> bd9ceb323b757bfbc12d4514f81b382b95a05f2e
 
   if (!updatedAddon) {
     return (
@@ -127,12 +156,29 @@ const AddonDetails = () => {
           }
           sx={{ width: "100%", my: 2 }}
         />
+<<<<<<< HEAD
         <SingleSelectInput
           title="Addon Category"
           selectedId={selectedId}
           setSelectedId={setSelectedId}
           items={addonCategories}
         />
+=======
+        <FormControl fullWidth>
+          <InputLabel>Addon Category</InputLabel>
+          <Select
+            value={selectedId}
+            label="Addon Category"
+            onChange={(e) => setSelectedId(e.target.value as number)}
+          >
+            {addonCategories.map((item) => (
+              <MenuItem key={item.id} value={item.id}>
+                {item.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+>>>>>>> bd9ceb323b757bfbc12d4514f81b382b95a05f2e
         <Box>
           <Button
             variant="contained"

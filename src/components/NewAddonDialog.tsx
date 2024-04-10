@@ -11,6 +11,10 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -50,6 +54,7 @@ const DialogBox = ({ open, setOpen }: Props) => {
     dispatch(
       createAddon({
         ...newAddon,
+        addonCategoryId: selectedId,
         onSuccess: () => {
           dispatch(
             openSneakbar({
@@ -103,6 +108,20 @@ const DialogBox = ({ open, setOpen }: Props) => {
           setSelectedId={setSelectedId}
           items={addonCategories}
         />
+        <FormControl fullWidth>
+          <InputLabel>Addon Category</InputLabel>
+          <Select
+            value={selectedId}
+            label="Addon Category"
+            onChange={(e) => setSelectedId(e.target.value as number)}
+          >
+            {addonCategories.map((item) => (
+              <MenuItem key={item.id} value={item.id}>
+                {item.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </DialogContent>
       <DialogActions>
         <Button
